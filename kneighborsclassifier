@@ -86,3 +86,34 @@ for i, k in enumerate(k_vals):
 
 plt.tight_layout()
 plt.show()
+
+
+
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import NearestCentroid
+from sklearn.metrics import accuracy_score
+
+param_grid_nc = {'shrink_threshold': [None, 0.1, 0.5, 1.0, 2.0]}
+
+grid_search_nc = GridSearchCV(NearestCentroid(), param_grid_nc, cv=5)
+
+grid_search_nc.fit(Xtr, Ytr)
+
+best_params_nc = grid_search_nc.best_params_
+best_score_nc = grid_search_nc.best_score_
+
+print(f"Best hyperparameters for Nearest Centroid: {best_params_nc}")
+print(f"Best cross-validation accuracy for Nearest Centroid: {best_score_nc}")
+
+best_nc = NearestCentroid(shrink_threshold=best_params_nc['shrink_threshold'])
+best_nc.fit(Xtr, Ytr)
+Pred_te_tuned_nc = best_nc.predict(Xte)
+Accuracy_te_tuned_nc = accuracy_score(Yte, Pred_te_tuned_nc)
+
+print(f"Test accuracy with tuned Nearest Centroid: {Accuracy_te_tuned_nc}")
+
+
+Best hyperparameters for Nearest Centroid: {'shrink_threshold': 1.0}
+Best cross-validation accuracy for Nearest Centroid: 1.0
+Test accuracy with tuned Nearest Centroid: 0.9425287356321839
