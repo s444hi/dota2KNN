@@ -66,8 +66,19 @@ fig.tight_layout()
 
 
 seed = 1234
-np.random.seed(seed)
-Xtr, Xte, Ytr, Yte = train_test_split(X_scaled, y, test_size=0.7, random_state=seed, shuffle=True)
+# random seed fixes the sequence of randon nums so that the experiment is reproducible
+# so if i were to run this again i'll get the same train/test split instead of a new one every time
+np.random.seed(seed) # tells numpy to use the chosen seed whenever there's randomness like shuffling
+# without this results could vary run to run
+Xtr, Xte, Ytr, Yte = train_test_split(X_scaled, y, test_size=0.3, random_state=seed, shuffle=True)
+# breaks dataset into training data (for learnign) and test data (for evaluation)
+
+# xscaled = fts (win rate, pick rate, kda, game mode)
+# y = labels (abaddon, wraith king, warlock
+# shuffle = true shuffles the rwos before splitting so the data isn't grouped by order
+
+# Xtr: training features, Xte: testing features, Ytr: training labels, Yte: testing labels
+# so the classifier is trained on xtr ytr and tested on xte, yte
 
 NC = NearestCentroid()
 NC.fit(Xtr, Ytr)
