@@ -80,11 +80,15 @@ Xtr, Xte, Ytr, Yte = train_test_split(X_scaled, y, test_size=0.3, random_state=s
 # Xtr: training features, Xte: testing features, Ytr: training labels, Yte: testing labels
 # so the classifier is trained on xtr ytr and tested on xte, yte
 
-NC = NearestCentroid()
-NC.fit(Xtr, Ytr)
-Pred_tr = NC.predict(Xtr)
+# nc is a prototype classifier
+# for each class, heros, find the centroid/mean vector of its training points after scaling
+# to find a new point you compute the distance to each centroud (euclidian) and choose the closest one
+NC = NearestCentroid() # construct model with defaults
+NC.fit(Xtr, Ytr) # groups training rows by class/heor, computes class centroid with 4 fts, stores 3 centroids
+
+Pred_tr = NC.predict(Xtr) # predict: for each row, compute distance to those 3 centroids then choose nearest
 Pred_te = NC.predict(Xte)
-Accuracy_tr = accuracy_score(Ytr, Pred_tr)
+Accuracy_tr = accuracy_score(Ytr, Pred_tr) # freaction correct
 Accuracy_te = accuracy_score(Yte, Pred_te)
 
 print(f"-- accuracy (train): {Accuracy_tr}")
@@ -93,54 +97,29 @@ print(f"-- accuracy (test): {Accuracy_te}")
 // -- accuracy (train): 0.8648648648648649
 // -- accuracy (test): 0.8160919540229885
 
-plot_kwargs = {'cmap' : 'viridis',
-               'response_method' : 'predict',
-               'plot_method' : 'pcolormesh',
-               'shading' : 'auto',
-               'alpha' : 0.6,
-               'grid_resolution' : 100}
-
-figure, axes = plt.subplots(2, 2, figsize=(10, 10))
-
-k_vals = [1, 5, 10, 37] 
-for i, k in enumerate(k_vals):
-    knn = KNeighborsClassifier(n_neighbors=k)
-    knn.fit(Xtr[:, :2], Ytr)
-
-    DecisionBoundaryDisplay.from_estimator(knn, Xtr[:, :2], ax=axes[i // 2, i % 2], **plot_kwargs)
-    axes[i // 2, i % 2].scatter(Xtr[:, 0], Xtr[:, 1], c=Ytr, edgecolor='k', s=12)
-    axes[i // 2, i % 2].set_title(f"k: {k}")
-
-plt.tight_layout()
-plt.show()
 
 
 
-
-from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import NearestCentroid
-from sklearn.metrics import accuracy_score
+from sklearn.inspection import DecisionBoundaryDisplay
+import matplotlib.pyplot as plt
+import numpy as np
 
-param_grid_nc = {'shrink_threshold': [None, 0.1, 0.5, 1.0, 2.0]}
+X2_tr = Xtr[:, [0, 1]]
+X2_te = Xte[:, [0, 1]]
 
-grid_search_nc = GridSearchCV(NearestCentroid(), param_grid_nc, cv=5)
+nc2 = NearestCentroid()
+nc2.fit(X2_tr, Ytr)
 
-grid_search_nc.fit(Xtr, Ytr)
+fig, ax = plt.subplots(figsize(6,6))
+DecisionBoundaryDisplay.from_estimator(nc2, X2_tr, response_method="predict", plot_method="pcolormesh", grid_resolotion=300, alpha=0.5, cmap="viridis", ax=ax)
 
-best_params_nc = grid_search_nc.best_params_
-best_score_nc = grid_search_nc.best_score_
+ax.scatter(X2_tr[:,0], X2_tr[:,1], c=Ytr, s=20, edgecolor"k")
 
-print(f"Best hyperparameters for Nearest Centroid: {best_params_nc}")
-print(f"Best cross-validation accuracy for Nearest Centroid: {best_score_nc}")
+centroids = nc2.centroids_
+ax.scatter(centroids[:,0], centroids[:,1], marker="X", s=200, c=np.unique(Ytr), edgecolor = "k", linewidths=1)
 
-best_nc = NearestCentroid(shrink_threshold=best_params_nc['shrink_threshold'])
-best_nc.fit(Xtr, Ytr)
-Pred_te_tuned_nc = best_nc.predict(Xte)
-Accuracy_te_tuned_nc = accuracy_score(Yte, Pred_te_tuned_nc)
-
-print(f"Test accuracy with tuned Nearest Centroid: {Accuracy_te_tuned_nc}")
-
-
-Best hyperparameters for Nearest Centroid: {'shrink_threshold': 1.0}
-Best cross-validation accuracy for Nearest Centroid: 1.0
-Test accuracy with tuned Nearest Centroid: 0.9425287356321839
+ax.set_xlabel("Feature 0 (scaled)")
+ax.set_ylabel("Feature 1 (scaled)")
+ax.set_title("Nearest Centroid decision boundary with 2 ft)
+plt.show()
