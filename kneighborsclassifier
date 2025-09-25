@@ -94,9 +94,6 @@ Accuracy_te = accuracy_score(Yte, Pred_te)
 print(f"-- accuracy (train): {Accuracy_tr}")
 print(f"-- accuracy (test): {Accuracy_te}")
 
-// -- accuracy (train): 0.8648648648648649
-// -- accuracy (test): 0.8160919540229885
-
 
 
 
@@ -105,21 +102,23 @@ from sklearn.inspection import DecisionBoundaryDisplay
 import matplotlib.pyplot as plt
 import numpy as np
 
+# yellow, warlock , teal, wraith king , purple, abaddon
+
 X2_tr = Xtr[:, [0, 1]]
 X2_te = Xte[:, [0, 1]]
 
 nc2 = NearestCentroid()
 nc2.fit(X2_tr, Ytr)
 
-fig, ax = plt.subplots(figsize(6,6))
-DecisionBoundaryDisplay.from_estimator(nc2, X2_tr, response_method="predict", plot_method="pcolormesh", grid_resolotion=300, alpha=0.5, cmap="viridis", ax=ax)
+fig, ax = plt.subplots(figsize=(6,6))
+DecisionBoundaryDisplay.from_estimator(nc2, X2_tr, response_method="predict", plot_method="pcolormesh", grid_resolution=300, alpha=0.5, cmap="viridis", ax=ax)
 
-ax.scatter(X2_tr[:,0], X2_tr[:,1], c=Ytr, s=20, edgecolor"k")
+ax.scatter(X2_tr[:,0], X2_tr[:,1], c=Ytr, s=20, edgecolor="k")
 
 centroids = nc2.centroids_
 ax.scatter(centroids[:,0], centroids[:,1], marker="X", s=200, c=np.unique(Ytr), edgecolor = "k", linewidths=1)
 
 ax.set_xlabel("Feature 0 (scaled)")
 ax.set_ylabel("Feature 1 (scaled)")
-ax.set_title("Nearest Centroid decision boundary with 2 ft)
+ax.set_title("Nearest Centroid decision boundary with 2 ft")
 plt.show()
