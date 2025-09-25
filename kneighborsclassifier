@@ -36,6 +36,9 @@ for i in range(4):
 
   fig.tight_layout()
 
+  # matplotlib makes histograms of first 4 features to check distributions
+  # ft 0 = win rate, ft 1 = pick rate, ft 2 = kda, ft 3 = game mode
+
 fig, axes = plt.subplots(4,4,figsize=(8,8))
 
 for i in range(4):
@@ -55,6 +58,12 @@ for i in range(4):
                     axes[i, j].scatter(df.iloc[k, j], df.iloc[k, i], color='orange', s=10)
 
 fig.tight_layout()
+
+# matplotlib creates 4x4 grid of plots, diagonal = histograms, rest = scatter of one ft vs another colored by class
+# red: abaddon, blue: wraith king, yellow: warlock
+
+# we can see that the red is highest for all the fts
+
 
 seed = 1234
 np.random.seed(seed)
