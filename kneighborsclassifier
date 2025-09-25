@@ -1,11 +1,11 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier, NearestCentroid
-from sklearn.model_selection import train_test_split
-from sklearn.inspection import DecisionBoundaryDisplay
-from sklearn.metrics import accuracy_score
+import numpy as np # fast arrays, math operations, manipulating arrays
+import matplotlib.pyplot as plt # main plotting library, used for histograms, scatter plots, subplots
+import pandas as pd # handles tabular data, loads csv into dataframe and grab feature/label columns
+from sklearn.preprocessing import StandardScaler # scales fts to mean 0, variance 1
+from sklearn.neighbors import KNeighborsClassifier, NearestCentroid # distance based classifiers
+from sklearn.model_selection import train_test_split # splits data to training and testing
+from sklearn.inspection import DecisionBoundaryDisplay # helps visualize classifier boundaries
+from sklearn.metrics import accuracy_score # how well predictions match true labels
 
 from google.colab import drive
 drive.mount('/content/drive')
@@ -13,13 +13,20 @@ drive.mount('/content/drive')
 url = 'https://docs.google.com/spreadsheets/d/1GT0vNzFgCKWwnXHrz3ruC71f8W2qWxJ7nLNMGsfQlMY/export?format=csv'
 df = pd.read_csv(url)
 
+# mount to gd to access files, pandas downloads sheet --> exported as csv to dataframe df
+
 df.head()
 
 X = df.iloc[:, :-1]
 y = df.iloc[:, -1].astype(int)
 
+# pandas indexing iloc slices df my row/column, x = win rate, pick rate, kda, y = hero label (abaddon, wraith king, warlock)
+
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+
+# converts features so they're ont the same scale because if it doesn't then knn and nc
+# would be skwed
 
 fig, axes = plt.subplots(1, 4, figsize=(12, 3))
 
